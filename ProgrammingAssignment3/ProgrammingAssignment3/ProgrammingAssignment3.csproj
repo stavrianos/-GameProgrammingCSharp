@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\greenrock.png" />
+    <Content Include="Content\magentarock.png" />
+    <Content Include="Content\whiterock.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

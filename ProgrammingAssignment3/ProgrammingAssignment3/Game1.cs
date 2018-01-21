@@ -22,8 +22,14 @@ namespace ProgrammingAssignment3
             WindowWidth / 2, WindowHeight / 2);
 
         // STUDENTS: declare variables for 3 rock sprites
+        Texture2D greenRockSprite;
+        Texture2D magentaRockSprite;
+        Texture2D whiteRockSprite;
 
         // STUDENTS: declare variables for 3 rocks
+        Rock rock0;
+        Rock rock1;
+        Rock rock2;
 
         // delay support
         const int TotalDelayMilliseconds = 1000;
@@ -69,7 +75,9 @@ namespace ProgrammingAssignment3
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // STUDENTS: Load content for 3 sprites
-
+            greenRockSprite = Content.Load<Texture2D>("greenrock");
+            magentaRockSprite = Content.Load<Texture2D>("magentarock");
+            whiteRockSprite = Content.Load<Texture2D>("whiterock");
         }
 
         /// <summary>
@@ -92,7 +100,19 @@ namespace ProgrammingAssignment3
                 Exit();
 
             // STUDENTS: update rocks
-
+            //update each rock if it exists by calling the Update method
+            if (rock0 != null)
+            {
+                rock0.Update(gameTime);
+            }
+            if (rock1 != null)
+            {
+                rock1.Update(gameTime);
+            }
+            if (rock2 != null)
+            {
+                rock2.Update(gameTime);
+            }
 
             // update timer
             elapsedDelayMilliseconds += gameTime.ElapsedGameTime.Milliseconds;
@@ -100,7 +120,18 @@ namespace ProgrammingAssignment3
             {
                 // STUDENTS: timer expired, so spawn new rock if fewer than 3 rocks in window
                 // Call the GetRandomRock method to do this
-
+                if (rock0 == null)
+                {
+                    rock0 = GetRandomRock();
+                }
+                else if (rock1 == null)
+                {
+                    rock1 = GetRandomRock();
+                }
+                else if (rock2 == null)
+                {
+                    rock2 = GetRandomRock();
+                }
                 // restart timer
                 elapsedDelayMilliseconds = 0;
             }
@@ -108,6 +139,18 @@ namespace ProgrammingAssignment3
             // STUDENTS: Check each rock to see if it's outside the window. If so
             // spawn a new random rock for it by calling the GetRandomRock method
             // Caution: Only check the property if the variable isn't null
+            if (rock0 != null && rock0.OutsideWindow)
+            {
+                rock0 = GetRandomRock();
+            }
+            if (rock1 != null && rock1.OutsideWindow)
+            {
+                rock1 = GetRandomRock();
+            }
+            if (rock2 != null && rock2.OutsideWindow)
+            {
+                rock2 = GetRandomRock();
+            }
 
             base.Update(gameTime);
         }
@@ -122,6 +165,20 @@ namespace ProgrammingAssignment3
 
             // STUDENTS: draw rocks
             spriteBatch.Begin();
+           
+            //draw existing rocks
+            if (rock0 != null)
+            {
+                rock0.Draw(spriteBatch);
+            }
+            if (rock1 != null)
+            {
+                rock1.Draw(spriteBatch);
+            }
+            if (rock2 != null)
+            {
+                rock2.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
 
@@ -136,14 +193,15 @@ namespace ProgrammingAssignment3
         {
             // STUDENTS: Uncomment and complete the code below to randomly pick a rock sprite by calling the GetRandomSprite method
             //Texture2D sprite = ;
+            Texture2D sprite = GetRandomSprite();
 
             // STUDENTS: Uncomment and complete the code below to randomly pick a velocity by calling the GetRandomVelocity method
             //Vector2 velocity = ;
+            Vector2 velocity = GetRandomVelocity();
 
             // STUDENTS: After completing the two lines of code above, delete the following two lines of code
             // They're only included so the code I provided to you compiles
-            Texture2D sprite = null;
-            Vector2 velocity = Vector2.Zero;
+
 
             // return a new rock, centered in the window, with the random sprite and velocity
             return new Rock(sprite, centerLocation, velocity, WindowWidth, WindowHeight);
@@ -157,23 +215,19 @@ namespace ProgrammingAssignment3
         {
             // STUDENTS: Uncommment and modify the code below as appropriate to return 
             // a random sprite
-            //int spriteNumber = ;
-            //if (spriteNumber == 0)
-            //{
-            //    return <put sprite variable name here (without < and >)>;
-            //}
-            //else if (spriteNumber == 1)
-            //{
-            //    return <put sprite variable name here (without < and >)>;
-            //}
-            //else
-            //{
-            //    return <put sprite variable name here (without < and >)>;
-            //}
+            int spriteNumber = rand.Next(0, 3);
+            switch (spriteNumber)
+            {
+                case 0:
+                    return greenRockSprite;
+                case 1:
+                    return magentaRockSprite;
+                default:
+                    return whiteRockSprite;
+            }
 
             // STUDENTS: After completing the code above, delete the following line of code
             // It's only included so the code I provided to you compiles
-            return null;
         }
 
         /// <summary>
@@ -184,27 +238,21 @@ namespace ProgrammingAssignment3
         {
             // STUDENTS: Uncommment and modify the code below as appropriate to return 
             // a random velocity
-            //int velocityNumber = ;
-            //if (velocityNumber == 0)
-            //{
-            //    return upLeft;
-            //}
-            //else if (velocityNumber == 1)
-            //{
-            //    return upRight;
-            //}
-            //else if (velocityNumber == 2)
-            //{
-            //    return downRight;
-            //}
-            //else
-            //{
-            //    return downLeft;
-            //}
+            int velocityNumber = rand.Next(0, 4);
+            switch (velocityNumber)
+            {
+                case 0:
+                    return upLeft;
+                case 1:
+                    return upRight;
+                case 2:
+                    return downRight;
+                default:
+                    return downLeft;
+            }
 
             // STUDENTS: After completing the code above, delete the following line of code
             // It's only included so the code I provided to you compiles
-            return Vector2.Zero;
         }
     }
 }
