@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
+using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -199,10 +200,15 @@ namespace GameProject
                     if (projectile.Type == ProjectileType.TeddyBear && projectile.Active && projectile.CollisionRectangle.Intersects(burger.CollisionRectangle))
                     {
                         burger.Health -= GameConstants.TeddyBearProjectileDamage;
-                        CheckBurgerKill();
                         projectile.Active = false;
                         healthString = GameConstants.HealthPrefix + burger.Health.ToString();
                         burgerDamage.Play();
+                        CheckBurgerKill();
+                        if (burgerDead)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                            this.Reset();                            
+                    }
                     }
                 }
 
@@ -406,7 +412,16 @@ namespace GameProject
             {
                 burgerDead = true;
                 burgerDeath.Play();
+                
             }
+        }
+
+        private void Reset()
+        {
+            // Reset all variables
+            burger = new Burger(Content, @"graphics\burger", graphics.PreferredBackBufferWidth / 2, (graphics.PreferredBackBufferHeight / 8) * 7, burgerShot);
+            score = 0;
+            burgerDead = false;
         }
 
         #endregion
