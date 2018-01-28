@@ -195,75 +195,74 @@ namespace GameProject
                 }
             }
                 // check and resolve collisions between burger and projectiles
+            foreach (Projectile projectile in projectiles)
+            {
+                if (projectile.Type == ProjectileType.TeddyBear && projectile.Active && projectile.CollisionRectangle.Intersects(burger.CollisionRectangle))
+                {
+                    burger.Health -= GameConstants.TeddyBearProjectileDamage;
+                    projectile.Active = false;
+                    healthString = GameConstants.HealthPrefix + burger.Health.ToString();
+                    burgerDamage.Play();
+                    CheckBurgerKill();
+                    if (burgerDead)
+                    {
+                        this.Reset();                            
+                    }
+                }
+            }
+
+            // check and resolve collisions between teddy bears and projectiles
+            foreach (TeddyBear bear in bears)
+            {
                 foreach (Projectile projectile in projectiles)
                 {
-                    if (projectile.Type == ProjectileType.TeddyBear && projectile.Active && projectile.CollisionRectangle.Intersects(burger.CollisionRectangle))
+                    //active french fry projectile hits an active bear actor
+                    if (projectile.Type == ProjectileType.FrenchFries && bear.CollisionRectangle.Intersects(projectile.CollisionRectangle) && projectile.Active && bear.Active)
                     {
-                        burger.Health -= GameConstants.TeddyBearProjectileDamage;
+                        bear.Active = false;
                         projectile.Active = false;
-                        healthString = GameConstants.HealthPrefix + burger.Health.ToString();
-                        burgerDamage.Play();
-                        CheckBurgerKill();
-                        if (burgerDead)
-                        {
-                            System.Threading.Thread.Sleep(1000);
-                            this.Reset();                            
-                    }
+                        //play the explosion at the bear's location
+                        explosions.Add(new Explosion(explosionSpriteStrip, bear.Location.X, bear.Location.Y, explosion));
+
+                        score += GameConstants.BearPoints;
+                        scoreString = GameConstants.ScorePrefix + score;
                     }
                 }
+            }
 
-                // check and resolve collisions between teddy bears and projectiles
-                foreach (TeddyBear bear in bears)
+            // clean out inactive teddy bears and add new ones as necessary
+            for (int i = bears.Count - 1; i >= 0; i--)
+            {
+                if (!bears[i].Active)
                 {
-                    foreach (Projectile projectile in projectiles)
-                    {
-                        //active french fry projectile hits an active bear actor
-                        if (projectile.Type == ProjectileType.FrenchFries && bear.CollisionRectangle.Intersects(projectile.CollisionRectangle) && projectile.Active && bear.Active)
-                        {
-                            bear.Active = false;
-                            projectile.Active = false;
-                            //play the explosion at the bear's location
-                            explosions.Add(new Explosion(explosionSpriteStrip, bear.Location.X, bear.Location.Y, explosion));
-
-                            score += GameConstants.BearPoints;
-                            scoreString = GameConstants.ScorePrefix + score;
-                        }
-                    }
+                    bears.RemoveAt(i);
                 }
+            }
+            //later, we'll add bears up to the max again
+            while (bears.Count < GameConstants.MaxBears)
+            {
+                SpawnBear();
+            }
 
-                // clean out inactive teddy bears and add new ones as necessary
-                for (int i = bears.Count - 1; i >= 0; i--)
+            // clean out inactive projectiles
+            for (int i = projectiles.Count - 1; i >= 0; i--)
+            {
+                if (!projectiles[i].Active)
                 {
-                    if (!bears[i].Active)
-                    {
-                        bears.RemoveAt(i);
-                    }
+                    projectiles.RemoveAt(i);
                 }
-                //later, we'll add bears up to the max again
-                while (bears.Count < GameConstants.MaxBears)
-                {
-                    SpawnBear();
-                }
+            }
 
-                // clean out inactive projectiles
-                for (int i = projectiles.Count - 1; i >= 0; i--)
+            // clean out finished explosions
+            for (int i = explosions.Count - 1; i >= 0; i--)
+            {
+                if (explosions[i].Finished)
                 {
-                    if (!projectiles[i].Active)
-                    {
-                        projectiles.RemoveAt(i);
-                    }
+                    explosions.RemoveAt(i);
                 }
+            }
 
-                // clean out finished explosions
-                for (int i = explosions.Count - 1; i >= 0; i--)
-                {
-                    if (explosions[i].Finished)
-                    {
-                        explosions.RemoveAt(i);
-                    }
-                }
-
-                base.Update(gameTime);
+            base.Update(gameTime);
             
         }
 
